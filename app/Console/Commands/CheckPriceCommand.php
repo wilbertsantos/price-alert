@@ -27,10 +27,13 @@ class CheckPriceCommand extends Command
                 $discordService->sendAlert("Price of {$alert->coin} has gone above {$alert->price}! {$alert->coin}'s current price = {$currentPrice['price']} @here {$alert->notes}");
                 //$emailService->sendAlert("Price of {$alert->coin} has gone above {$alert->price}!");
                 $alert->update(['status' => 'done']);
+                
+                Log::info("discord update sent");
             } elseif ($alert->condition == 'lower' && $currentPrice['price'] <= $alert->price) {
                 $discordService->sendAlert("Price of {$alert->coin} has gone below {$alert->price}! {$alert->coin}'s current price = {$currentPrice['price']} @here {$alert->notes}");
                 //$emailService->sendAlert("Price of {$alert->coin} has gone below {$alert->price}!");
                 $alert->update(['status' => 'done']);
+                Log::info("discord update sent");
             }
         }
         

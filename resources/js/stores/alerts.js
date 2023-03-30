@@ -27,6 +27,26 @@ export const useAlertsStore = defineStore("alerts", {
         console.log(error)
       }
     },
+    async delete(id) {
+      try {
+        let options = {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          url: '/api/alerts',
+          params: { id: id },
+        };
+        await axios.request(options)
+          .then(r => {
+            this.data = r.data;
+            console.log('r.alerts', r.data);
+          });
+      } catch (error) {
+        console.log(error)
+      }
+    },
   },
 
 

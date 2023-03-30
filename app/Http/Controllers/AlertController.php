@@ -16,7 +16,7 @@ class AlertController extends Controller
     {
 
 
-        $users = DataTableService::of(Alert::where('status', 'active'))->make($request);
+        $users = DataTableService::of(Alert::where('status', 'active')->orderByDesc('id'))->make($request);
 
         return response()->json([
             'success' => true,

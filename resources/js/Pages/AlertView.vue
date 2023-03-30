@@ -21,6 +21,10 @@ import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import { PrimeIcons, FilterMatchMode, FilterOperator } from 'primevue/api';
+import {
+  mdiDelete,
+  mdiMagnify,
+} from "@mdi/js";
 
 const alerts = ref();
 const alertStore = useAlertsStore();
@@ -63,6 +67,13 @@ const loadLazyData = async () => {
   });
 }
 
+const deleteAlert = async (id) => {
+  console.log('deleteAlert', id);
+  await alertStore.delete(id);
+  await loadLazyData();
+
+}
+
 
 const onSort = (event) => {
   console.log('onSort');
@@ -75,6 +86,31 @@ const onPage = (event) => {
   lazyParams.value = event;
   loadLazyData();
 };
+
+const onFilter = (event) => {
+  console.log('onFilter');
+  lazyParams.value = event;
+  loadLazyData();
+};
+
+
+const buttonSettingsModel = ref([]);
+
+const buttonsOutline = computed(
+  () => buttonSettingsModel.value.indexOf("outline") > -1
+);
+
+const buttonsSmall = computed(
+  () => buttonSettingsModel.value.indexOf("small") > -1
+);
+
+const buttonsDisabled = computed(
+  () => buttonSettingsModel.value.indexOf("disabled") > -1
+);
+
+const buttonsRounded = computed(
+  () => buttonSettingsModel.value.indexOf("rounded") > -1
+);
 
 </script>
 
@@ -94,10 +130,9 @@ const onPage = (event) => {
               <i class="pi pi-times pt-3 cursor-pointer " @click="resetSearchFilter" style='margin-left: -30px;' />
             </div>
           </div>
-          <button class="ml-1 btn bg-custom-color-1000 text-white mr-1 mb-2" @click="onFilter($event)"
-            id="globalSearchBtn">
-            <SearchIcon class="w-5 h-5" />
-          </button>
+
+          <BaseButton color="primary" :icon="mdiMagnify" :small="buttonsSmall" :outline="buttonsOutline"
+            :disabled="buttonsDisabled" :rounded-full="buttonsRounded" @click="onFilter($event)" id="globalSearchBtn" />
         </div>
 
 
@@ -111,10 +146,23 @@ const onPage = (event) => {
           <template #loading>
             Loading Alerts data. Please wait.
           </template>
+          <Column field="id" header="ID" :sortable="true"></Column>
+          <Column field="author" header="Author" :sortable="true"></Column>
           <Column field="coin" header="Coin" :sortable="true"></Column>
-          <Column field="condition" header="Condition" :sortable="true"></Column>
+          <Column field="condition" header="Type" :sortable="true"></Column>
           <Column field="price" header="Price"></Column>
-          <Column field="status" header="Status" :sortable="true"></Column>
+          <Column field="status" header="Status"></Column>
+          <Column field="notes" header="Notes" :sortable="true"></Column>
+          <Column :exportable="false" header="Actions">
+            <template #body="data">
+              <div class="content-center flex justify-center">
+                <p>
+                  <BaseButton color="danger" :icon="mdiDelete" :small="buttonsSmall" :outline="buttonsOutline"
+                    :disabled="buttonsDisabled" :rounded-full="buttonsRounded" @click="deleteAlert(data.id)" />
+                </p>
+              </div>
+            </template>
+          </Column>
         </DataTable>
 
       </CardBox>
