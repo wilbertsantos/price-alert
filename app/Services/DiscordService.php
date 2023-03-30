@@ -17,13 +17,20 @@ class DiscordService
     }
 
     public function sendAlert($message)
-    {
-        $response = Http::post($this->webhookUrl, [
-            'content' => $message,
-        ], [
-            'Authorization' => 'Bot '.$this->botToken,
-        ]);
+{
+    $response = Http::post($this->webhookUrl, [
+        'content' => $message,
+    ], [
+        'Authorization' => 'Bot '.$this->botToken,
+    ]);
 
-        return $response->status() === 204;
+    if ($response->successful()) {
+        return true;
+    } else {
+        $errorMessage = 'Failed to send alert: '.$response->status().' '.$response->reason();
+        Log::error($errorMessage);
+        return $errorMessage;
     }
+}
+
 }
