@@ -90,10 +90,22 @@ class AlertController extends Controller
 
     public function destroy(Request $request, Alert $alert)
     {
-        $alert->delete();
 
-        return redirect()->route('alerts.index')
-            ->with('success', 'Alert deleted successfully.');
+
+        $id = $request->input('id');
+        try {
+            $alert = Alert::find($id);
+            $alert->delete();
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error', 'message' => $e->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+        ]);
+
     }
 
     public function undoDelete(Request $request, $id)

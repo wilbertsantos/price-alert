@@ -28,6 +28,8 @@ export const useAlertsStore = defineStore("alerts", {
       }
     },
     async delete(id) {
+      let status = '';
+      console.log('delete alert #', id);
       try {
         let options = {
           method: 'DELETE',
@@ -35,20 +37,48 @@ export const useAlertsStore = defineStore("alerts", {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          url: '/api/alerts',
-          params: { id: id },
+          url: '/api/alerts/' + id,
+          data: { id: id }
         };
         await axios.request(options)
           .then(r => {
             this.data = r.data;
-            console.log('r.alerts', r.data);
+            status = 'success';
           });
       } catch (error) {
+        status = 'error';
         console.log(error)
       }
+      return {
+        'status': status
+      };
     },
+
+    async deleter(id) {
+      let status = '';
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        url: '/api/alerts/' + id,
+        data: { id: id }
+      };
+      await axios.request(options).then(response => {
+        status = 'ok';
+        console.log(response);
+      }).catch(function (error) {
+        console.error('Employees Delete Issue')
+        console.error(error);
+        status = 'error';
+      });
+      return {
+        'status': status
+      };
+    },
+
+
   },
-
-
 
 });

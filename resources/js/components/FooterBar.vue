@@ -10,14 +10,12 @@ const year = new Date().getFullYear();
   <footer class="py-2 px-6" :class="containerMaxW">
     <BaseLevel>
       <div class="text-center md:text-left">
-        <b
-          >&copy;{{ year }},
-          <a href="https://justboil.me/" target="_blank">JustBoil.me</a>.</b
-        >
+        <b>&copy;{{ year }},
+          <a href="" target="_blank">make me proud</a>.</b>
         <slot />
       </div>
       <div class="md:py-2">
-        <a href="https://justboil.me">
+        <a href="">
           <JustboilLogo class="w-auto h-8 md:h-6" />
         </a>
       </div>

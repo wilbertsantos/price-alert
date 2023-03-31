@@ -24,6 +24,7 @@ import { PrimeIcons, FilterMatchMode, FilterOperator } from 'primevue/api';
 import {
   mdiDelete,
   mdiMagnify,
+  mdiCheckCircle,
 } from "@mdi/js";
 
 const alerts = ref();
@@ -41,6 +42,8 @@ const filters = ref({
   'price': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   'status': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
+const showSuccessBar = ref(false);
+const showErrorBar = ref(false);
 
 onMounted(async () => {
   lazyParams.value = {
@@ -69,7 +72,14 @@ const loadLazyData = async () => {
 
 const deleteAlert = async (id) => {
   console.log('deleteAlert', id);
-  await alertStore.delete(id);
+  await alertStore.delete(id).then(response => {
+    console.log('delete response', response);
+    if (response.status === 'success') {
+      showSuccessBar.value = true;
+    } else {
+      showErrorBar.value = true;
+    }
+  });
   await loadLazyData();
 
 }
@@ -112,6 +122,12 @@ const buttonsRounded = computed(
   () => buttonSettingsModel.value.indexOf("rounded") > -1
 );
 
+const notificationSettingsModel = ref([]);
+
+const notificationsOutline = computed(
+  () => notificationSettingsModel.value.indexOf("outline") > -1
+);
+
 </script>
 
 <template>
@@ -119,6 +135,19 @@ const buttonsRounded = computed(
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiTableBorder" title="Alerts" main>
       </SectionTitleLineWithButton>
+
+
+      <NotificationBar v-if="showSuccessBar" color="success" :icon="mdiCheckCircle" :outline="notificationsOutline">
+        <b>Success state</b>. NotificationBar
+        <template #right>
+          <BaseButton label="x" :color="notificationsOutline ? 'success' : 'white'" :outline="notificationsOutline"
+            rounded-full small />
+        </template>
+      </NotificationBar>
+
+      <NotificationBar v-if="showErrorBar" color="danger" :icon="mdiAlertCircle" :outline="notificationsOutline">
+        <b>Danger state</b>. NotificationBar
+      </NotificationBar>
 
       <CardBox class="mb-6" has-table>
 
@@ -154,7 +183,7 @@ const buttonsRounded = computed(
           <Column field="status" header="Status"></Column>
           <Column field="notes" header="Notes" :sortable="true"></Column>
           <Column :exportable="false" header="Actions">
-            <template #body="data">
+            <template #body="{ data: data }">
               <div class="content-center flex justify-center">
                 <p>
                   <BaseButton color="danger" :icon="mdiDelete" :small="buttonsSmall" :outline="buttonsOutline"
