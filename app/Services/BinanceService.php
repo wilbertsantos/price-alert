@@ -13,7 +13,8 @@ class BinanceService
     {
         $this->client = new Client();
     }
-
+    //support the multiple symbols
+    //https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","BNBUSDT"]
     public function getCurrentPrice($symbol)
     {
         $url = $this->baseUrl . '/api/v3/ticker/price?symbol=' . $symbol;

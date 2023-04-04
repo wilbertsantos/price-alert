@@ -32,20 +32,9 @@ class AlertController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'coin' => 'required',
-            'price' => 'required|numeric',
-            'condition' => 'required|in:lower,higher',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
+  
         $alert = new Alert();
-        $alert->coin = Str::upper($request->input('coin'));
+        $alert->coin =  Str::replace('PERP', '', Str::upper($request->input('coin')));
         $alert->price = $request->input('price');
         $alert->condition = $request->input('condition');
         $alert->status = 'active';
