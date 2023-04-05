@@ -24,7 +24,16 @@ class AlertRequest extends FormRequest
     public function rules()
     {
         return [
-            'coin' => 'required|string|max:255',
+            'coin' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (!\App\Models\Spot::where('coin', $value)->exists()) {
+                        $fail("The selected $attribute is invalid.");
+                    }
+                },
+            ],
             'price' => 'required|numeric',
             'condition' => 'required|in:lower,higher',
         ];

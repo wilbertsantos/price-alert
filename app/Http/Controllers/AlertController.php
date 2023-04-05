@@ -9,6 +9,7 @@ use App\Models\Alert;
 use App\Jobs\ProcessAlert;
 use App\Services\DataTableService;
 use Illuminate\Support\Str;
+use App\Http\Requests\AlertRequest;
 
 class AlertController extends Controller
 {
@@ -30,7 +31,7 @@ class AlertController extends Controller
         return view('alerts.create');
     }
 
-    public function store(Request $request)
+    public function store(AlertRequest $request)
     {
   
         $alert = new Alert();
