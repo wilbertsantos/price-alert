@@ -25,7 +25,7 @@ class CheckPriceCommand extends Command
             }
         }
         $currentPrices = $binanceService->getCurrentPrices($coinsList);
-        if($currentPrices['error']){
+        if(isset($currentPrices['error'])){
             $discordService->sendAlert("Error has been occured {$currentPrices['error']}");
             foreach ($coins as $alert) {
                 $coin =  Str::replace('PERP', '', Str::upper($alert->coin));
