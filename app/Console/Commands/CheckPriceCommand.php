@@ -20,7 +20,9 @@ class CheckPriceCommand extends Command
         $coins = Alert::where('status', 'active')->get();
         $coinsList = [];
         foreach( $coins as $coin){
-            $coinsList[] = Str::replace('PERP', '', Str::upper($coin['coin']));
+            if(!in_array(Str::replace('PERP', '', Str::upper($coin['coin'])),  $coinsList)){
+                $coinsList[] = Str::replace('PERP', '', Str::upper($coin['coin']));
+            }
         }
         $currentPrices = $binanceService->getCurrentPrices($coinsList);
         if($currentPrices['error']){
