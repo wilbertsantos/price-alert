@@ -20,6 +20,15 @@ class Kernel extends ConsoleKernel
             ->after(function () {
                 Log::info('Price Check Job Done!');
             });
+
+            
+        $schedule->command('binance:generate-coins')->daily()       
+            ->before(function () {
+                Log::info('Initializing Generate Coins:');
+            })
+            ->after(function () {
+                Log::info('Generate Coins Job Done!');
+            });
     }
 
     /**
