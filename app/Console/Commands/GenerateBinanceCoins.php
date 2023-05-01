@@ -31,7 +31,7 @@ class GenerateBinanceCoins extends Command
         DB::table('spot')->truncate();
 
         foreach ($coins as $coin) {
-            DB::table('spot')->insert([
+            DB::table('spots')->insert([
                 'coin' => $coin,
                 'status' => 'active',
             ]);

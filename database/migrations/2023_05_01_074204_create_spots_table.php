@@ -8,7 +8,7 @@ class CreateSpotTable extends Migration
 {
     public function up()
     {
-        Schema::create('spot', function (Blueprint $table) {
+        Schema::create('spots', function (Blueprint $table) {
             $table->id();
             $table->string('coin')->unique();
             $table->enum('status', ['active', 'inactive'])->default('active');
@@ -18,6 +18,6 @@ class CreateSpotTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('spot');
+        Schema::dropIfExists('spots');
     }
 }
