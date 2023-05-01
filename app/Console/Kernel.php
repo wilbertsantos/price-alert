@@ -21,6 +21,15 @@ class Kernel extends ConsoleKernel
                 Log::info('Price Check Job Done!');
             });
 
+        $schedule->command('fxprice:check')->everyMinute()         
+            ->before(function () {
+                Log::info('Initializing Price Check:');
+            })
+            ->after(function () {
+                Log::info('Price Check Job Done!');
+            });
+
+            
             
         $schedule->command('binance:generate-coins')->daily()       
             ->before(function () {

@@ -17,14 +17,15 @@ class CheckPriceCommand extends Command
 
     public function handle(BinanceService $binanceService, DiscordService $discordService, EmailService $emailService)
     {
-        $coins = Alert::where('status', 'active')->get();
+        //$coins = Alert::where('status', 'active')->get();
+        $coins = Alert::where('status', 'active')->where('type', 'crypto')->get();
         $coinsList = [];
         foreach( $coins as $coin){
             if(!in_array(Str::replace('PERP', '', Str::upper($coin['coin'])),  $coinsList)){
                 $coinsList[] = Str::replace('PERP', '', Str::upper($coin['coin']));
             }
         }
-        $currentPrices = $binanceService->getCurrentPrices($coinsList);
+        $currentPrices = (!empty($coinsList)) ? $binanceService->getCurrentPrices($coinsList) : [];
         if(isset($currentPrices['error'])){
             $discordService->sendAlert("Error has been occured {$currentPrices['error']}");
             foreach ($coins as $alert) {
@@ -53,32 +54,33 @@ class CheckPriceCommand extends Command
             }
         }else{
             //dump($currentPrices);
-            foreach ($coins as $alert) {
-                $coin =  Str::replace('PERP', '', Str::upper($alert->coin));
-                $found = false;
-                foreach($currentPrices as $prices){
-                    $found = true;
-                    if($prices['symbol'] === $coin){
-                        Log::info("#{$alert->id}: Checking the Price of {$coin} for the price {$alert->price}? current price = {$prices['price']}");
-                        if ($alert->condition == 'higher' && $prices['price'] >= $alert->price) {
-                            $discordService->sendAlert("@{$alert->author}! Price of {$coin} has gone above {$alert->price}! {$coin}'s current price = {$prices['price']} @here {$alert->notes}");
-                            //$emailService->sendAlert("Price of {$coin} has gone above {$alert->price}!");
-                            $alert->update(['status' => 'done']);
-                            
-                            Log::info("its higher! discord update sent");
-                        } elseif ($alert->condition == 'lower' && $prices['price'] <= $alert->price) {
-                            $discordService->sendAlert("@{$alert->author}! Price of {$coin} has gone below {$alert->price}! {$coin}'s current price = {$prices['price']} @here {$alert->notes}");
-                            //$emailService->sendAlert("Price of {$coin} has gone below {$alert->price}!");
-                            $alert->update(['status' => 'done']);
-                            Log::info("its lower! discord update sent");
+            if(!empty($coins)) {
+                foreach ($coins as $alert) {
+                    $coin =  Str::replace('PERP', '', Str::upper($alert->coin));
+                    $found = false;
+                    foreach($currentPrices as $prices) {
+                        $found = true;
+                        if($prices['symbol'] === $coin) {
+                            Log::info("#{$alert->id}: Checking the Price of {$coin} for the price {$alert->price}? current price = {$prices['price']}");
+                            if ($alert->condition == 'higher' && $prices['price'] >= $alert->price) {
+                                $discordService->sendAlert("@{$alert->author}! Price of {$coin} has gone above {$alert->price}! {$coin}'s current price = {$prices['price']} @here {$alert->notes}");
+                                //$emailService->sendAlert("Price of {$coin} has gone above {$alert->price}!");
+                                $alert->update(['status' => 'done']);
+
+                                Log::info("its higher! discord update sent");
+                            } elseif ($alert->condition == 'lower' && $prices['price'] <= $alert->price) {
+                                $discordService->sendAlert("@{$alert->author}! Price of {$coin} has gone below {$alert->price}! {$coin}'s current price = {$prices['price']} @here {$alert->notes}");
+                                //$emailService->sendAlert("Price of {$coin} has gone below {$alert->price}!");
+                                $alert->update(['status' => 'done']);
+                                Log::info("its lower! discord update sent");
+                            }
                         }
                     }
-                }
-                if (!$found) {
-                    echo 'Price for ' . $coin . ' not found.' . PHP_EOL;
+                    if (!$found) {
+                        echo 'Price for ' . $coin . ' not found.' . PHP_EOL;
+                    }
                 }
             }
-
         }
         
     }

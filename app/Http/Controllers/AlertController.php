@@ -41,6 +41,10 @@ class AlertController extends Controller
         $alert->status = 'active';
         $alert->notes = $request->input('notes');
         $alert->author = $request->input('author');
+        $type = $request->input('type');
+            if(isset($type)){
+                $alert->type = $type;
+            }
         //$alert->user_id = Auth::id();
         $alert->save();
 

@@ -10,7 +10,5 @@
     "supportFile": "tests/cypress/support/index.js",
     "screenshotsFolder": "tests/cypress/screenshots",
     "fixturesFolder": "tests/cypress/fixture",
-    "ignoreTestFiles": [
-        // "sample_spec.ts"
-    ]
+    "ignoreTestFiles": []
 }

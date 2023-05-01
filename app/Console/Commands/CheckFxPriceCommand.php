@@ -20,41 +20,38 @@ class CheckFxPriceCommand extends Command
         
             $fxprices = $forexservice->getallPrices();
 
-            //dump($fxprices["response"]);
+            dump($fxprices);
 
 
-                foreach ($alerts as $currency) {
-                    $found = false;
-                    foreach ($fxprices["response"] as $price) {
-                        if ($price['s'] === $currency['coin']) {
-                            $found = true;
-                        dump($found);
-                        dump($currency);
-                        dump($price);
-                            if ($currency['condition'] == 'higher') {
-                                if ($price['h'] > $currency['price']) {
-                                
-                                    $discordService->sendAlert("Price of {$currency->coin} has gone above {$currency->price}! {$currency->coin}'s current price = {$price['h']} @here {$currency->notes}");
-                                    //$emailService->sendAlert("Price of {$currency->coin} has gone above {$currency->price}!");
-                                    $currency->update(['status' => 'done']);
-                                    
-                                    Log::info("its higher! discord update sent");
-                                }
-                            } else {
-                                if ($price['l'] < $currency['price']) {
-                                    $discordService->sendAlert("Price of {$currency->coin} has gone below {$currency->price}! {$currency->coin}'s current price = {$price['h']} @here {$currency->notes}");
-                                    //$emailService->sendAlert("Price of {$alert->coin} has gone below {$alert->price}!");
-                                    $currency->update(['status' => 'done']);
-                                    Log::info("its lower! discord update sent");
-                                }
+            foreach ($alerts as $currency) {
+                $found = false;
+                foreach ($fxprices["rates"] as $pair => $data) {
+                    if ($pair === $currency['coin']) {
+                        $found = true;
+                        Log::info("Checking the Price of {$pair} for the price {$currency['price']}? current price = {$data['rate']}");
+                        if ($currency['condition'] == 'higher') {
+                            if ($data['rate'] > $currency['price']) {
+                                $discordService->sendAlert("Price of {$currency['coin']} has gone above {$currency['price']}! {$currency['coin']}'s current price = {$data['rate']} @here {$currency['notes']}");
+                                //$emailService->sendAlert("Price of {$currency['coin']} has gone above {$currency['price']}!");
+                                $currency->update(['status' => 'done']);
+                                Log::info("its higher! discord update sent");
                             }
-                            break;
+                        } else {
+                            if ($data['rate'] < $currency['price']) {
+                                $discordService->sendAlert("Price of {$currency['coin']} has gone below {$currency['price']}! {$currency['coin']}'s current price = {$data['rate']} @here {$currency['notes']}");
+                                //$emailService->sendAlert("Price of {$currency['coin']} has gone below {$currency['price']}!");
+                                $currency->update(['status' => 'done']);
+                                Log::info("its lower! discord update sent");
+                            }
                         }
-                    }
-                    if (!$found) {
-                        echo 'Price for ' . $currency['coin'] . ' not found.' . PHP_EOL;
+                        break;
                     }
                 }
+                if (!$found) {
+                    echo 'Price for ' . $currency['coin'] . ' not found.' . PHP_EOL;
+                }
+            }
+
 
 
 

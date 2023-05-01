@@ -5,7 +5,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview --port 4173",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+        "cypress": "cypress open"
     },
     "dependencies": {
         "@mdi/js": "^7.0.96",
@@ -34,6 +35,7 @@
         "autoprefixer": "^10.4.12",
         "axios": "^1.1.2",
         "chart.js": "^4.2.1",
+        "cypress": "^12.9.0",
         "eslint": "^8.5.0",
         "eslint-plugin-vue": "^9.0.0",
         "laravel-vite-plugin": "^0.7.2",
