@@ -28,7 +28,7 @@ class GenerateBinanceCoins extends Command
 
         $coins = $coins->unique()->values();
 
-        DB::table('spot')->truncate();
+        DB::table('spots')->truncate();
 
         foreach ($coins as $coin) {
             DB::table('spots')->insert([
@@ -36,6 +36,29 @@ class GenerateBinanceCoins extends Command
                 'status' => 'active',
             ]);
         }
+        DB::table('spots')->insert([
+            [
+                'coin' => 'AUDUSD',
+                'status' => 'active'
+            ],
+            [
+                'coin' => 'EURUSD',
+                'status' => 'active'
+            ],
+            [
+                'coin' => 'GBPUSD',
+                'status' => 'active'
+            ],
+            [
+                'coin' => 'USDJPY',
+                'status' => 'active'
+            ],
+            [
+                'coin' => 'USDCAD',
+                'status' => 'active'
+            ]
+        ]);
+
 
         $this->info(count($coins) . ' USDT coins retrieved and saved to the "spot" table.');
     }
